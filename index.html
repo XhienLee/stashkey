@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>Stashkey: private notes</title>
+    <meta name="theme-color" content="#E6F0FF" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#12141C" media="(prefers-color-scheme: dark)">
+    <meta name="description" content="Keep short notes and secrets under 6 words. Locked in your browser.">
+    <link rel="icon" href="icons/icon-192.png" type="image/png">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="family/family.css">
+    <script type="module" src="app.js"></script>
+</head>
+<body>
+<header class="bar">
+    <a href="./" class="brand">Stashkey</a>
+    <button type="button" class="back" id="logout" hidden>Log out</button>
+</header>
+<main class="page">
+    <section id="view-login" class="stack">
+        <div>
+            <h1>Private notes</h1>
+            <p class="lead">Keep passwords, recovery codes and short notes under 6 words. Your browser locks everything before it is saved, so the server can't read your notes.</p>
+        </div>
+        <div class="card">
+            <h2>Open my stash</h2>
+            <p class="alert" id="login-alert" role="alert" hidden></p>
+            <label class="label" for="words">Your 6 words</label>
+            <input class="field mono" id="words" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="tiger-mango-velvet-…">
+            <button type="button" class="btn btn-main btn-wide" id="open">Open my stash</button>
+        </div>
+        <div class="card">
+            <h2>New here?</h2>
+            <p class="lead">Make a stash. You get 6 words that are the only way back in. If you lose them, nobody can recover your notes.</p>
+            <p class="alert" id="new-alert" role="alert" hidden></p>
+            <button type="button" class="btn btn-line" id="make">Make a new stash</button>
+            <div id="made" hidden>
+                <ol class="key" id="made-words" aria-label="Your 6 words"></ol>
+                <p class="warn"><strong>Write these 6 words down.</strong> They are not saved anywhere else.</p>
+                <label class="check"><input type="checkbox" id="saved"> I wrote down my 6 words</label>
+                <button type="button" class="btn btn-main btn-wide" id="create" disabled>Create my stash</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="view-stash" hidden>
+        <p class="alert" id="stash-alert" role="alert" hidden></p>
+        <div class="toolbar">
+            <label class="sr-only" for="search">Search notes</label>
+            <input class="field" type="search" id="search" placeholder="Search notes" autocomplete="off" spellcheck="false">
+            <button type="button" class="btn btn-main btn-small" id="new">New note</button>
+        </div>
+        <div class="stash-grid">
+            <ul class="notes" id="notes"></ul>
+            <div class="card" id="editor" hidden>
+                <label class="label" for="title">Title</label>
+                <input class="field" id="title" type="text" maxlength="120" autocomplete="off">
+                <label class="label" for="body">Note</label>
+                <textarea class="field body-field" id="body" autocomplete="off" spellcheck="false"></textarea>
+                <div class="editor-row">
+                    <span class="status" id="saved-status" role="status" aria-live="polite"></span>
+                    <button type="button" class="btn btn-line btn-small" id="delete">Delete note</button>
+                </div>
+            </div>
+            <p class="muted" id="empty">No notes yet. Add one with "New note".</p>
+        </div>
+        <div class="panels">
+            <details class="panel">
+                <summary>Delete my whole stash</summary>
+                <p>This erases every note for good and frees your 6 words. It can't be undone.</p>
+                <button type="button" class="btn btn-line btn-small" id="wipe">Delete everything</button>
+            </details>
+        </div>
+    </section>
+</main>
+<footer class="footer">
+    <div class="footer-in">
+        <span>Made by Ninth Life Labs</span>
+        <span><a href="https://github.com/XhienLee/stashkey" rel="noreferrer">Source code</a></span>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,45 @@
+.stack { display: grid; gap: 20px; }
+.stack > .card, .stack > .panel { margin: 0; }
+.card { padding: clamp(18px, 4vw, 28px); }
+.card h2 { margin-bottom: 6px; }
+.card .lead { font-size: 16px; margin-bottom: 16px; }
+.card .btn-wide { margin-top: 16px; }
+.card .label { display: block; margin-top: 18px; }
+.card > .label:first-child, .card > .alert + .label { margin-top: 0; }
+.card .field { width: 100%; }
+.card select.field { width: auto; min-width: 160px; }
+.hint .btn-plain { display: inline; min-height: 0; margin: 0; padding: 0; font: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.pick { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.pick .small { overflow-wrap: anywhere; }
+.copy-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+.linkbox { width: 100%; display: block; resize: vertical; min-height: 0; font: 500 15px/1.5 var(--mono); overflow-wrap: anywhere; }
+.status { margin-top: 12px; min-height: 22px; font-size: 14px; color: var(--muted); }
+.family-choices { margin-top: 24px; }
+a.choice { text-decoration: none; color: var(--ink); }
+.family-choices a.choice:nth-child(1) { background: var(--c1); }
+.family-choices a.choice:nth-child(2) { background: var(--c2); }
+.family-choices a.choice:nth-child(3) { background: var(--c3); }
+.family-choices a.choice:nth-child(4) { background: var(--c4); }
+.family-choices a.choice:nth-child(5) { background: var(--c6); }
+.family-choices a.choice:nth-child(6) { background: var(--c5); }
+.tag { display: inline-block; margin-top: 12px; padding: 2px 10px; border: var(--lw) solid var(--ink); border-radius: 99px; background: #FFFFFF; font: 700 12px var(--sans); color: var(--ink); }
+.result-facts { margin-top: 14px; display: grid; gap: 6px; font-size: 15px; }
+.result-facts b { font-weight: 700; }
+.stash-grid { display: grid; gap: 20px; }
+.notes { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.note-btn { display: block; width: 100%; text-align: left; font: inherit; color: var(--text); background: var(--surface); border: var(--lw) solid var(--edge); border-radius: 16px; padding: 12px 14px; cursor: pointer; box-shadow: 3px 3px 0 var(--edge); }
+.note-btn:hover { transform: translate(-1px, -1px); }
+.note-btn[aria-current="true"] { background: var(--c1); color: var(--ink); }
+.note-title { display: block; font: 800 17px var(--display); overflow-wrap: anywhere; }
+.note-snip { display: block; font-size: 14px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.note-btn[aria-current="true"] .note-snip { color: var(--ink); }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 16px; }
+.toolbar .field { flex: 1 1 200px; min-height: 48px; }
+.body-field { min-height: 240px; resize: vertical; font: 400 16px/1.5 var(--sans); }
+.editor-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+@media (min-width: 820px) {
+    .stash-grid { grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr); align-items: start; }
+}
+button.back { font: 700 15px var(--sans); cursor: pointer; }
+.card .key { grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); }
+.linkbox, .card .pubkey-field { field-sizing: content; min-height: 3.2em; }
