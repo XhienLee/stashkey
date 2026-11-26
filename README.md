@@ -1,44 +1,70 @@
 # Stashkey
 
-Private notes for passwords, recovery codes and short secrets, under 6 words. Your browser locks everything before it is saved, so the server can't read your notes.
+**Private notes you open with 6 words. No account, no password.**
 
-Part of the key family, small private tools with one key each and no accounts, next to [Sealkey](https://github.com/XhienLee/sealkey) and [Stowkey](https://github.com/XhienLee/stowkey).
+Type your notes, and they are locked in your browser and saved on the server. To get them back, type your 6 words on any phone or computer.
 
-## How it works
+> **No ready-made website yet.** This is the code for the tool. To use it you (or someone you trust) run it on a web host that supports PHP. Once it is running, anyone can use it from a browser with nothing to install. If you are not technical, ask a friend or a hosting company to set it up, or follow "Run it" below. Running it on your own computer takes one command.
 
-1. **Your key:** 6 random words from Sealkey's word list (about 77 bits). Stashkey shows them once when you make a stash.
-2. **Two keys from one:** the words go through Argon2id (3 passes, 64 MiB) into a master key. From it come a **lookup id** that names your stash on the server and a separate **encryption key**. Knowing the lookup id does not give the encryption key.
-3. **Saving:** all your notes become one blob: JSON, padded to 1 KiB steps so its size says little, then locked with XChaCha20-Poly1305. The server keeps the blob and a version number.
-4. **Two tabs:** a save must name the version it started from. If another tab or device saved first, the second save is refused and that copy turns read-only, so notes are never silently overwritten.
-5. **Logging out** wipes the key and the notes from the page. "Delete my whole stash" erases the blob from the server and frees your words.
+## What is it good for?
+
+- A small private notepad you can reach from any device
+- Keeping a recovery code, a list or a draft away from apps that read your notes
+- Notes you want without making yet another account
+
+## How to use it
+
+1. Open the site and press **Make a new stash**.
+2. Write down your **6 words**. They are your key and your login in one. They cannot be reset.
+3. Tick "I wrote down my 6 words" and press **Create my stash**.
+4. Press **New note**, write a title and text. You can search your notes.
+5. Next time, type your 6 words and press **Open my stash**.
+
+**Delete note** removes one note. **Delete everything** removes the whole stash.
+
+## Is it safe? What can it not do?
+
+- **The server cannot read your notes.** They are locked in your browser first. The server only holds scrambled data and a lookup number made from your words.
+- **Lose the 6 words, lose the notes.** There is no reset and no one to ask.
+- Anyone who learns your 6 words can read and change your notes. Treat them like a password.
+- Notes are limited to 256 KiB (a lot of text, but not a document library).
+- The server can see roughly how often you save. It cannot see what you wrote.
+- It cannot protect you from a hacked device or a fake copy of the website. Only use a site you trust.
+
+## Questions
+
+**Can the person running the site read my notes?** No.
+**What if I edit on two devices at once?** Stashkey notices and asks you before it overwrites anything.
+**Can I choose my own 6 words?** No. They are generated randomly so they are strong. Make a new stash for new words.
+
+---
+
+## For developers
+
+### How it works
+
+- 6 random words from Sealkey's 7,772-word list (about 77 bits) go through Argon2id with a fixed salt into a master key. One part is the **lookup id** (BLAKE2b), the other the **encryption key**.
+- Notes are JSON padded to 1 KiB steps and sealed with XChaCha20-Poly1305 (AEAD).
+- Saves are versioned (`rev`). A stale write gets a `409` so two devices never silently overwrite each other.
+- Limit 256 KiB per stash. A `del` action removes a stash.
 
 ## Run it
 
-It needs PHP 8.1+ with `pdo_sqlite`. Try it on your computer:
+Needs PHP 8.1+ with `pdo_sqlite` and `sodium`. On your own computer:
 
 ```bash
-FAMILY_DATA_DIR=/tmp/stashkey-data php -S 127.0.0.1:8800 router.php
+FAMILY_DATA_DIR=/tmp/stashkey-data php -d post_max_size=40M -S 127.0.0.1:8800 router.php
 ```
 
-Then open <http://127.0.0.1:8800>. `router.php` only adds the Content-Security-Policy that `_headers` gives on Netlify (Netlify can't run PHP). For real hosting use Apache or nginx with PHP-FPM and HTTPS, and keep `FAMILY_DATA_DIR` **outside the web root** (the API refuses to run otherwise).
+Open <http://127.0.0.1:8800>. `router.php` only adds the same security headers that `_headers` gives on Netlify (Netlify can't run PHP).
+
+For real hosting use Apache or nginx with PHP-FPM and **HTTPS**. Keep `FAMILY_DATA_DIR` **outside the web root** (the API refuses to run otherwise), and allow request bodies of about 26 MB (`post_max_size`, `client_max_body_size`).
 
 | Setting (environment variable) | Default | Meaning |
 |---|---|---|
 | `FAMILY_DATA_DIR` | `family_data` next to the repo folder | Database |
 | `STASHKEY_NEW_PER_IP_HOUR` | 5 | New stashes one address can make per hour |
 | `STASHKEY_NEW_GLOBAL_HOUR` | 100 | New stashes the whole site can make per hour |
-| `STASHKEY_MAX_STASHES` | 10000 | Stashes on one server |
-| `STASHKEY_SAVES_PER_IP_HOUR`, `STASHKEY_SAVES_GLOBAL_HOUR` | 600, 20000 | Saves per hour |
-| `STASHKEY_OPEN_PER_IP_HOUR`, `STASHKEY_OPEN_GLOBAL_HOUR` | 120, 5000 | Opens per hour |
-
-A stash can hold up to 256 KiB.
-
-## What it cannot protect
-
-- Lost words can't be recovered. Nobody can read or reset a stash without them.
-- The server sees when a stash changes and its size to the nearest KiB.
-- Anyone who steals the database can try to guess 6-word keys offline. Each guess costs 64 MiB and three Argon2id passes, and there are about 2^77 of them.
-- It can't protect you from a hacked device, a changed copy of this website, or shoulder surfing while a note is on screen.
 
 ## Tests
 
@@ -49,8 +75,21 @@ pip install -r tests/requirements.txt && python3 -m playwright install chromium
 python3 tests/e2e.py
 ```
 
-They check the crypto (padding, tampering, wrong words), every server rule (versions, size limits, rate limits, deleting), and the whole flow in Chromium, including that note text never goes over the network readable.
+They check the crypto, every server rule (conflicts, size limits, deletion, rate limits) and the whole flow in Chromium.
+
+## The key family
+
+Small private tools. One key each, no accounts, nothing to sign up for.
+
+| Tool | What it does | Needs a server? |
+|---|---|---|
+| [Sealkey](https://github.com/XhienLee/sealkey) | Lock a file with a few words, open it later | No |
+| [Stowkey](https://github.com/XhienLee/stowkey) | Private online file storage, one key | Yes (PHP) |
+| [Sendkey](https://github.com/XhienLee/sendkey) | Send a file through a link that works once | Yes (PHP + SQLite) |
+| [Dropkey](https://github.com/XhienLee/dropkey) | A link anyone can use to send *you* a file privately | Yes (PHP + SQLite) |
+| [Stashkey](https://github.com/XhienLee/stashkey) | Private notes you open with 6 words | Yes (PHP + SQLite) |
+| [Stampkey](https://github.com/XhienLee/stampkey) | Prove a file is yours and unchanged | No |
 
 ## Credits
 
-The word list and key handling in `js/` come from [Sealkey](https://github.com/XhienLee/sealkey), and the encryption library is [libsodium](https://github.com/jedisct1/libsodium.js) in `vendor/`. MIT licensed.
+The word list, file format and crypto in `js/` come from [Sealkey](https://github.com/XhienLee/sealkey). The encryption library is [libsodium](https://github.com/jedisct1/libsodium.js) in `vendor/`. MIT licensed, free to use and change.

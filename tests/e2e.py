@@ -30,7 +30,7 @@ def write(name, data):
     return path
 
 
-env = dict(os.environ, FAMILY_DATA_DIR=str(WORK / 'data'), FAMILY_MIN_FREE_BYTES='0', STASHKEY_NEW_PER_IP_HOUR='100', SENDKEY_PER_IP_HOUR='100')
+env = dict(os.environ, FAMILY_DATA_DIR=str(WORK / 'data'), FAMILY_MIN_FREE_BYTES='0', STASHKEY_NEW_PER_IP_HOUR='100')
 server = subprocess.Popen(['php', '-d', 'post_max_size=40M', '-S', f'127.0.0.1:{PORT}', '-t', str(ROOT), str(ROOT / 'router.php')], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 time.sleep(1.2)
 
