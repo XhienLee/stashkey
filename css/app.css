@@ -5,7 +5,6 @@
 @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 700; font-display: swap; src: url('../fonts/dm-sans-latin-700-normal.woff2') format('woff2'); }
 @font-face { font-family: 'DM Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('../fonts/dm-mono-latin-500-normal.woff2') format('woff2'); }
 
-/* Sticker design: thick ink outlines, offset shadows, colourful chips. Phone-first. */
 *, *::before, *::after { box-sizing: border-box; }
 :root {
     color-scheme: light;
@@ -250,7 +249,6 @@ progress::-moz-progress-bar { background: var(--c2); }
 
 .view { max-width: 640px; margin: 0 auto; }
 
-/* Tabs: a floating bottom bar on phones, chunky pills from tablet width up. */
 .tabs { position: fixed; z-index: 40; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 4px; padding: 6px; background: var(--surface); border: var(--lw) solid var(--edge); border-radius: 99px; box-shadow: var(--shadow); }
 .tabs[hidden] + .page { padding-bottom: 64px; }
 .tabs:not([hidden]) ~ .page { padding-bottom: 120px; }
